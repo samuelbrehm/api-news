@@ -1,4 +1,5 @@
 import * as express from "express";
+import * as bodyParser from "body-parser";
 
 import Database from "./infra/db";
 
@@ -12,7 +13,14 @@ class StartUp {
     this._db = new Database();
     this._db.createConnection();
 
+    this.middlewares();
+
     this.routes();
+  }
+
+  middlewares() {
+    this.app.use(bodyParser.json());
+    this.app.use(bodyParser.urlencoded({ extended: false }));
   }
 
   routes() {
