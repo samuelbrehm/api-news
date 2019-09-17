@@ -41,7 +41,7 @@ class NewsController {
         Helper.sendResponse(
           res,
           HttpStatus.OK,
-          `${news.title} foi atualizada com sucesso!`
+          "Notícia foi atualizada com sucesso!"
         )
       )
       .catch(error => console.error.bind(console, `Error ${error}`));
@@ -52,11 +52,7 @@ class NewsController {
 
     NewsService.delete(_id)
       .then(() =>
-        Helper.sendResponse(
-          res,
-          HttpStatus.OK,
-          `Notícia atualizada com sucesso!`
-        )
+        Helper.sendResponse(res, HttpStatus.OK, "Notícia deletada com sucesso!")
       )
       .catch(error => console.error.bind(console, `Error ${error}`));
   }
