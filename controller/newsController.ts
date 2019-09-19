@@ -1,20 +1,34 @@
 import NewsService from "../services/newsService";
 import * as HttpStatus from "http-status";
+import * as redis from "redis";
 
 import Helper from "../infra/helper";
 import { response } from "express";
 
 class NewsController {
   async get(req, res) {
-    // NewsService.get()
-    //   .then(news => Helper.sendResponse(res, HttpStatus.OK, news))
-    //   .catch(error => console.error.bind(console, `Error ${error}`));
-    try {
-      let result = await NewsService.get();
-      Helper.sendResponse(res, HttpStatus.OK, result);
-    } catch (error) {
-      console.error(error);
-    }
+    let client = redis.createClient(6379, "redis");
+
+    await client.get("news", async function(err, reply) {
+      try {
+        if (reply) {
+          // console.log("redis");
+          Helper.sendResponse(res, HttpStatus.OK, JSON.parse(reply));
+        } else {
+          // console.log("db");
+
+          let response = await NewsService.get();
+
+          client.set("news", JSON.stringify(response));
+
+          client.expire("news", 20);
+
+          Helper.sendResponse(res, HttpStatus.OK, response);
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    });
   }
 
   async getById(req, res) {
