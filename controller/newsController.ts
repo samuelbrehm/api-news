@@ -2,59 +2,73 @@ import NewsService from "../services/newsService";
 import * as HttpStatus from "http-status";
 
 import Helper from "../infra/helper";
+import { response } from "express";
 
 class NewsController {
-  get(req, res) {
-    NewsService.get()
-      .then(news => Helper.sendResponse(res, HttpStatus.OK, news))
-      .catch(error => console.error.bind(console, `Error ${error}`));
+  async get(req, res) {
+    // NewsService.get()
+    //   .then(news => Helper.sendResponse(res, HttpStatus.OK, news))
+    //   .catch(error => console.error.bind(console, `Error ${error}`));
+    try {
+      let result = await NewsService.get();
+      Helper.sendResponse(res, HttpStatus.OK, result);
+    } catch (error) {
+      console.error(error);
+    }
   }
 
-  getById(req, res) {
-    const _id = req.params.id;
+  async getById(req, res) {
+    try {
+      const _id = req.params.id;
+      let result = await NewsService.getById(_id);
 
-    NewsService.getById(_id)
-      .then(news => Helper.sendResponse(res, HttpStatus.OK, news))
-      .catch(error => console.error.bind(console, `Error ${error}`));
+      Helper.sendResponse(res, HttpStatus.OK, result);
+    } catch (error) {
+      console.error(error);
+    }
   }
 
-  create(req, res) {
-    let vm = req.body;
-
-    NewsService.create(vm)
-      .then(news =>
-        Helper.sendResponse(
-          res,
-          HttpStatus.OK,
-          "Notícia cadastrada com sucesso!"
-        )
-      )
-      .catch(error => console.error.bind(console, `Error ${error}`));
+  async create(req, res) {
+    try {
+      let vm = req.body;
+      await NewsService.create(vm);
+      Helper.sendResponse(
+        res,
+        HttpStatus.OK,
+        "Notícia cadastrada com sucesso!"
+      );
+    } catch (error) {
+      console.error(error);
+    }
   }
 
-  update(req, res) {
-    const _id = req.params.id;
-    let news = req.body;
+  async update(req, res) {
+    try {
+      const _id = req.params.id;
+      let news = req.body;
 
-    NewsService.update(_id, news)
-      .then(news =>
-        Helper.sendResponse(
-          res,
-          HttpStatus.OK,
-          "Notícia foi atualizada com sucesso!"
-        )
-      )
-      .catch(error => console.error.bind(console, `Error ${error}`));
+      await NewsService.update(_id, news);
+
+      Helper.sendResponse(
+        res,
+        HttpStatus.OK,
+        "Notícia foi atualizada com sucesso!"
+      );
+    } catch (error) {
+      console.error(error);
+    }
   }
 
-  delete(req, res) {
-    const _id = req.params.id;
+  async delete(req, res) {
+    try {
+      const _id = req.params.id;
 
-    NewsService.delete(_id)
-      .then(() =>
-        Helper.sendResponse(res, HttpStatus.OK, "Notícia deletada com sucesso!")
-      )
-      .catch(error => console.error.bind(console, `Error ${error}`));
+      await NewsService.delete(_id);
+
+      Helper.sendResponse(res, HttpStatus.OK, "Notícia deletada com sucesso!");
+    } catch (error) {
+      console.error(error);
+    }
   }
 }
 
